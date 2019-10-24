@@ -12,21 +12,12 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import datetime
-import django_heroku
 from decouple import config
 from datetime import timedelta
 
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '#sy1il8^w6nyhhyq@2!$_(jl(5bg(_$4t22x)v$0ad&z&xzad9'
-
-# SECURITY WARNING: don't run with debug turned on in production!
+SECRET_KEY =  config('SECRET', default='#sy1il8^w6nyhhyq@2!$_(jl(5bg(_$4t22x)v$0ad&z&xzad9')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
@@ -42,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'provider'
 ]
 
 MIDDLEWARE = [
@@ -117,11 +109,9 @@ REST_FRAMEWORK = {
     )
 }
 
-refresh_token_lifetime = timedelta(days=config('REFRESH_TOKEN_LIFETIME', default=1, cast=int))
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=30),
-    'REFRESH_TOKEN_LIFETIME': refresh_token_lifetime,
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=config('REFRESH_TOKEN_LIFETIME', default=1, cast=int)),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
 
@@ -163,7 +153,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-django_heroku.settings(locals())
+if not config('DEBUG'):
+    import django_heroku
+    django_heroku.settings(locals())
 
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True

@@ -8,7 +8,6 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
             try:
                 admin = User.objects.create_superuser('admin', 'admin@admin.cc', 'admin')
-                admin.profile.is_admin = True
                 admin.save()
                 self.stdout.write('Successfully created superuser.')
             except IntegrityError:
