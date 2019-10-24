@@ -2,6 +2,8 @@
 
 A template repository for creating REST APIs with Django and Django Rest Framework.
 
+[![Known Vulnerabilities](https://snyk.io/test/github/Creationeers/Django_Barebone_Rest/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/Creationeers/Django_Barebone_Rest?targetFile=requirements.txt)
+
 ## Installation
 
 ```sh
