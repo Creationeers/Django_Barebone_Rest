@@ -5,6 +5,10 @@ from rest_framework import exceptions, permissions, generics
 from rest_framework.views import status
 from rest_framework.response import Response
 from decouple import config
+from ..util.messages import USER_CREATED, USER_NAME_EXISTS
+from ..util.builders import ResponseBuilder
+
+ResponseBuilder = ResponseBuilder()
 
 class RegisterUserView(generics.ListCreateAPIView):
     permission_classes = (permissions.AllowAny,)
@@ -14,9 +18,9 @@ class RegisterUserView(generics.ListCreateAPIView):
         try:
             User.objects.create_user(
                 username=request.data['username'], password=request.data['password'], email=request.data['email'])
-            return Response(data={'message': 'Created User'}, status=status.HTTP_201_CREATED)
+            return ResponseBuilder.get_response(message=USER_CREATED, status=status.HTTP_201_CREATED)
         except IntegrityError as e:
             transaction.rollback()
             if('unique constraint' in e.args[0].lower()):
-                return Response(data={'message': 'Username is already taken'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-            return Response(data=e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                return ResponseBuilder.get_response(message=USER_NAME_EXISTS, status=status.HTTP_409_CONFLICT)
+            return ResponseBuilder.get_response(message=e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
