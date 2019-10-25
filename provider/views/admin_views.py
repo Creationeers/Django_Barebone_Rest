@@ -10,6 +10,8 @@ from ..util.builders import ResponseBuilder
 
 ResponseBuilder = ResponseBuilder()
 
+UNIQUE_CONSTRAINT = 'unique constraint'
+
 class RegisterUserView(generics.ListCreateAPIView):
     permission_classes = (permissions.AllowAny,)
     authentication_classes = ()
@@ -21,6 +23,6 @@ class RegisterUserView(generics.ListCreateAPIView):
             return ResponseBuilder.get_response(message=USER_CREATED, status=status.HTTP_201_CREATED)
         except IntegrityError as e:
             transaction.rollback()
-            if('unique constraint' in e.args[0].lower()):
+            if(UNIQUE_CONSTRAINT in e.args[0].lower()):
                 return ResponseBuilder.get_response(message=USER_NAME_EXISTS, status=status.HTTP_409_CONFLICT)
             return ResponseBuilder.get_response(message=e.args, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
